@@ -1,4 +1,7 @@
 import os
+import sys
+import logging
+
 from datetime import datetime
 
 from flask import Flask, request, abort
@@ -16,6 +19,19 @@ app = Flask(__name__)
 
 channel_secret = os.getenv('LINE_CHANNEL_SECRET', None)
 channel_access_token = os.getenv('LINE_CHANNEL_ACCESS_TOKEN', None)
+
+if channel_secret is None:
+    print('Specify LINE_CHANNEL_SECRET')
+    sys.exit(1)
+
+if channel_access_token is None:
+    print('Specify LINE_CHANNEL_ACCESS_TOKEN')
+    sys.exit(1)
+
+gunicorn_error_logger = logging.getLogger('gunicorn.error')
+app.logger.handlers.extend(gunicorn_error_logger.handlers)
+app.logger.setLevel(logging.DEBUG)
+app.logger.debug('this will show in the log')
 
 line_bot_api = LineBotApi(channel_access_token)
 handler = WebhookHandler(channel_secret)
@@ -52,9 +68,8 @@ def callback():
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     line_bot_api.reply_message(
-        event.replay_token,
-        TextSendMessage(text=event.message.text)
-    )
+        event.reply_token,
+        TextSendMessage(text=event.message.text))
 
 
 if __name__ == '__main__':
