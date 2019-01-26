@@ -71,7 +71,7 @@ def handle_message(event):
     app.logger.info("Event: " + event.reply_token)
     line_bot_api.reply_message(
         event.reply_token,
-        TextSendMessage(text=event.message.text))
+        TextSendMessage("Hello"))
 
 
 if __name__ == '__main__':
