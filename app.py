@@ -84,8 +84,8 @@ def handle_message(event):
 
     if request_text == "show pic":
         image_message = ImageSendMessage (
-            original_content_url='http://loremflickr.com/600/400',
-            preview_image_url='http://loremflickr.com/600/400'
+            original_content_url='https://loremflickr.com/600/400',
+            preview_image_url='https://loremflickr.com/600/400'
         )
         line_bot_api.reply_message(
             event.reply_token,image_message
