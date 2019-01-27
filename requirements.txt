@@ -3,3 +3,4 @@ gunicorn==19.9.0
 line-bot-sdk==1.8.0
 requests==2.21.0
 codecov==2.0.15
+googletrans==2.4.0
