@@ -14,7 +14,7 @@ from linebot.exceptions import (
     InvalidSignatureError
 )
 from linebot.models import (
-    MessageEvent, TextMessage, TextSendMessage
+    MessageEvent, TextMessage, TextSendMessage, ImageSendMessage
 )
 
 app = Flask(__name__)
@@ -33,7 +33,7 @@ if channel_access_token is None:
 
 # gunicorn_error_logger = logging.getLogger('gunicorn.error')
 # app.logger.handlers.extend(gunicorn_error_logger.handlers)
-app.logger.setLevel(logging.DEBUG)
+# app.logger.setLevel(logging.DEBUG)
 # app.logger.debug('this will show in the log')
 
 line_bot_api = LineBotApi(channel_access_token)
@@ -76,15 +76,27 @@ def translate_text(text):
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
+    request_text = event.message.text
     app.logger.info("Event: " + event.reply_token)
     app.logger.info("Text: " + event.message.text)
     translated = translate_text(event.message.text)
     reply_text = translated
 
-    line_bot_api.reply_message(
-        event.reply_token,
-        TextSendMessage(reply_text))
+    if request_text == "show pic":
+        image_message = ImageSendMessage (
+            original_content_url='http://loremflickr.com/600/400',
+            preview_image_url='http://loremflickr.com/600/400'
+        )
+        line_bot_api.reply_message(
+            event.reply_token,image_message
+
+        )
+    else:
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(reply_text))
 
 
 if __name__ == '__main__':
     app.run(debug=True, use_reloader=True)
+    app.logger.setLevel(logging.DEBUG)
